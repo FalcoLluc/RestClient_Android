@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextUsername;
     private Button buttonSearch;
     private TextView resultsView;
+    Retrofit retrofit;
+    GitHub github;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,14 @@ public class MainActivity extends AppCompatActivity {
         editTextUsername = findViewById(R.id.editTextUsername);
         buttonSearch = findViewById(R.id.buttonSearch);
         resultsView = findViewById(R.id.resultsTextView);
+
+        //RetroFit
+        retrofit =
+                new Retrofit.Builder()
+                        .baseUrl("https://api.github.com")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+        github = retrofit.create(GitHub.class);
     }
 
     public void makeAPICall(){
@@ -61,14 +71,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter a GitHub username", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        Retrofit retrofit =
-                new Retrofit.Builder()
-                        .baseUrl("https://api.github.com")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-        // Create an instance of our GitHub API interface.
-        GitHub github = retrofit.create(GitHub.class);
         Call<List<Repo>> call = github.repos(username);
 
         call.enqueue(new Callback<List<Repo>>() {
